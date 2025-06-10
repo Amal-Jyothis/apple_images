@@ -41,8 +41,6 @@ if __name__ == "__main__":
     generated_image_path = r'output\generated_images'
     
     print('FID Score: ', fid(generated_image_path, input_img_path))
-    #print('FID Score: ', fid_score(gen_data, real_data))
-    #print('Inception Score: ', inception_score(gen_data))
 
     end_time = time.time()
     print('Time taken:', end_time - start_time)

@@ -3,58 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-# class Generator(torch.nn.Module):
-#     """
-#     Generator definition
-#     """
-#     def __init__(self, latent_size):
-#         super(Generator, self).__init__()
-#         self.main = torch.nn.Sequential(
-#             torch.nn.ConvTranspose2d(latent_size, 1024, 9, 1),
-#             torch.nn.BatchNorm2d(1024),
-#             torch.nn.ReLU(True),
-#             torch.nn.ConvTranspose2d(1024, 1024, 9, 2),
-#             torch.nn.BatchNorm2d(1024),
-#             torch.nn.ReLU(True),
-#             torch.nn.ConvTranspose2d(1024, 512, 9, 2),
-#             torch.nn.BatchNorm2d(512),
-#             torch.nn.ReLU(True),
-#             torch.nn.ConvTranspose2d(512, 256, 9, 2),
-#             torch.nn.BatchNorm2d(256),
-#             torch.nn.ReLU(True),
-#             torch.nn.ConvTranspose2d(256, 3, 16, 2),
-#             torch.nn.Tanh()
-#         )
-    
-#     def forward(self, input):
-#         return self.main(input)
-    
-# class Discriminator(torch.nn.Module):
-#     """
-#     Discriminator definition
-#     """
-#     def __init__(self):
-#         super(Discriminator, self).__init__()
-#         self.main = torch.nn.Sequential(
-#             torch.nn.Conv2d(3, 32, 14, 2),
-#             torch.nn.LeakyReLU(0.2, inplace=True),
-#             torch.nn.Conv2d(32, 32, 12, 2),
-#             torch.nn.BatchNorm2d(32),
-#             torch.nn.LeakyReLU(0.2, inplace=True),
-#             torch.nn.Conv2d(32, 16, 10, 2),
-#             torch.nn.BatchNorm2d(16),
-#             torch.nn.LeakyReLU(0.2, inplace=True),
-#             torch.nn.Conv2d(16, 8, 10, 2),
-#             torch.nn.BatchNorm2d(8),
-#             torch.nn.LeakyReLU(0.2, inplace=True),
-#             torch.nn.Conv2d(8, 1, 8, 1),
-#             torch.nn.Sigmoid()
-            
-#         )
-    
-#     def forward(self, input):
-#         return self.main(input)
-
 class Generator(torch.nn.Module):
     """
     Generator definition
@@ -110,13 +58,13 @@ class model_definition():
     """
     This class defines the optimiser type and the learning rate used for optimization
     """
-    def __init__(self, latent_size, learning_rate_G, learning_rate_D, reg_G, reg_D, beta_1=0.5, beta_2=0.999):
+    def __init__(self, device, latent_size, learning_rate_G, learning_rate_D, reg_G, reg_D, beta_1=0.5, beta_2=0.999):
         betas = (beta_1, beta_2)
 
-        self.model_gen = Generator(latent_size)
+        self.model_gen = Generator(latent_size).to(device)
         self.optimizerG = torch.optim.Adam(self.model_gen.parameters(), lr=learning_rate_G, betas=betas)#, weight_decay=reg_G)
 
-        self.model_discr = Discriminator()
+        self.model_discr = Discriminator().to(device)
         self.optimizerD = torch.optim.Adam(self.model_discr.parameters(), lr=learning_rate_D, betas=betas)#, weight_decay=reg_D)
 
 def gan(dataloader, model_save_path, image_save_path, **kwargs):
@@ -137,10 +85,12 @@ def gan(dataloader, model_save_path, image_save_path, **kwargs):
     reg_G = float(kwargs.get("reg_G"))
     reg_D = float(kwargs.get("reg_D"))
 
-    model = model_definition(latent_size, lr_G, lr_D, reg_G, reg_D)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    model = model_definition(device, latent_size, lr_G, lr_D, reg_G, reg_D)
 
     print('Training GAN model...')
-    training_gan(model, dataloader, latent_size, num_epochs=1000, discr_train_iter = d_iter, gen_train_iter = g_iter)
+    training_gan(model, device, dataloader, latent_size, num_epochs=1000, discr_train_iter = d_iter, gen_train_iter = g_iter)
 
     # image_generation(model, image_save_path, latent_size, 10)
 
@@ -152,7 +102,7 @@ def gan(dataloader, model_save_path, image_save_path, **kwargs):
 """
 training model
 """
-def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_iter = 5, gen_train_iter = 1):
+def training_gan(model, device, dataloader, latent_size, num_epochs = 5, discr_train_iter = 5, gen_train_iter = 1):
 
     """"
     Initialize loss values for plotting
@@ -170,6 +120,7 @@ def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_ite
 
     for epoch in range(num_epochs):
         for i, (images, _) in enumerate(dataloader):
+            images = images.to(device)
             discr_output_mean_b = 0
             output_mean_b = 0
             output_1_mean_b = 0
@@ -185,7 +136,7 @@ def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_ite
                 """"
                 Calculating D(X) and loss function
                 """
-                outputs_1 = model.model_discr(images).view(-1, 1)
+                outputs_1 = model.model_discr(images).view(-1, 1).to(device)
                 y_train = torch.full((images.size()[0], 1), 1.0)
 
                 """"
@@ -198,7 +149,7 @@ def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_ite
                 Calculating D(G(z)) and loss function
                 """
 
-                z = torch.randn(images.size()[0], latent_size, 1, 1)
+                z = torch.randn(images.size()[0], latent_size, 1, 1).to(device)
                 gen_output = model.model_gen(z).detach()
                 outputs_2 = model.model_discr(gen_output).view(-1, 1)
                 z_output = torch.full((images.size()[0], 1), 0.0)
@@ -207,7 +158,7 @@ def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_ite
 
                 #Calculating Gradient Penalty term for loss function
                 # eps = 0.3
-                eps = torch.rand(images.shape[0], 1, 1, 1)
+                eps = torch.rand(images.shape[0], 1, 1, 1).to(device)
                 eps = eps.expand_as(images)
                 
                 
@@ -239,7 +190,7 @@ def training_gan(model, dataloader, latent_size, num_epochs = 5, discr_train_ite
                 """
 
                 model.optimizerG.zero_grad()
-                #z = torch.randn(images.size()[0], latent_size, 1, 1)
+                z = torch.randn(images.size()[0], latent_size, 1, 1).to(device)
                 outputs = model.model_discr(model.model_gen(z)).view(-1, 1)
                 output_label = torch.full((images.size()[0], 1), 1.0)
                 # loss_frm_G = torch.nn.BCELoss()(outputs, output_label)
