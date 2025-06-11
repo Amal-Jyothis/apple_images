@@ -3,8 +3,8 @@ Synthetic image generation of fruits using Generative Adversarial Network(GAN) m
 
 A few samples of the input images are,<br/>
 <img src="input_data/input_images/apples/r0_0.jpg" width="150" />
-<img src="input_data/input_images/apples/r0_1.jpg" width="150" />
-<img src="input_data/input_images/apples/r0_10.jpg" width="150" />
+<img src="input_data/input_images/apples/r1_1.jpg" width="150" />
+<img src="input_data/input_images/apples/r1_300.jpg" width="150" />
 
 Images were generated with FID Score of 61. Samples of the generated images are: <br/>
 <img src="output/generated_images/apples/generated_image_0.png" width="150" />
