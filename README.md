@@ -1,5 +1,5 @@
 # Artificial Image Generation
-Synthetic image generation of fruits using GAN model. This code provides the model for generation of images of apples and calculate the FID score for the generated images.
+Synthetic image generation of fruits using Generative Adversarial Network(GAN) model. This code provides the model for generation of images of apples and calculate the FID score for the generated images.
 
 For installing required libraries run, 
 ```
