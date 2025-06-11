@@ -2,7 +2,7 @@
 Synthetic image generation of fruits using Generative Adversarial Network(GAN) model. This code provides the model for generation of images of apples and calculate the FID score for the generated images.
 
 For an input for images:
-![input image](input_data/input_images/apples/r0_0.png)
+![input image](input_data/input_images/apples/r0_0.jpg)
 
 For installing required libraries run, 
 ```
