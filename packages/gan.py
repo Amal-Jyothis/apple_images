@@ -177,8 +177,6 @@ def training_gan(model, device, dataloader, latent_size, num_epochs = 5, discr_t
                 model.optimizerD.step()
 
             loss_plotD[epoch] = total_loss
-            #loss_plotD[epoch] += loss_frm_D
-            #loss_plotGD[epoch] += loss_frm_GD
 
             """
             Training generator

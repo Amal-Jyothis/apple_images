@@ -11,7 +11,9 @@ def image_generation(path, image_save_path, latent_size, eg_nos_latent = 100):
 
     model = torch.load(path, weights_only=False)
 
-    z_test = torch.randn(eg_nos_latent, latent_size, 1, 1)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    z_test = torch.randn(eg_nos_latent, latent_size, 1, 1).to(device)
 
     outputs = model.model_gen(z_test)
     outputs = outputs.detach().numpy()

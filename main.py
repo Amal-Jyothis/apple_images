@@ -14,8 +14,8 @@ if __name__ == "__main__":
     '''
     Start of input data extraction
     '''
-    input_path = r'input_data\input_images'
-    save_input_img_path = r'input_data\input_saved_images\apples'
+    input_path = r'input_data/input_images'
+    save_input_img_path = r'input_data/input_saved_images/apples'
 
     dataloader = get_data(input_path)
     save_input_data(dataloader, save_input_img_path)    
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     '''
     Train gan model
     '''
-    model_save_path = r'output\saved_model\model.pth'
-    image_save_path = r'output\generated_images\apples'
+    model_save_path = r'output/saved_model/model.pth'
+    image_save_path = r'output/generated_images/apples'
     hyperparameters = {'learning_rate_G': 5e-4,
                        'learning_rate_D': 5e-4,
                        'g_iter': 1,
@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
     image_generation(model_save_path, image_save_path, hyperparameters['latent_size'], eg_nos_latent=100)
 
-    input_img_path = r'input_data\input_saved_images'
-    generated_image_path = r'output\generated_images'
+    input_img_path = r'input_data/input_saved_images'
+    generated_image_path = r'output/generated_images'
     
     print('FID Score: ', fid(generated_image_path, input_img_path))
 
