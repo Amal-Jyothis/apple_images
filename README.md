@@ -28,4 +28,6 @@ Generated images are stored in output/generated_images/apples. The input data ca
 
 ## References
 <a id="1">[1]</a> Ian J. Goodfellow and Jean Pouget-Abadie and Mehdi Mirza and Bing Xu and David Warde-Farley and Sherjil Ozair and Aaron Courville and Yoshua Bengio, Generative Adversarial Networks, 2014, https://arxiv.org/abs/1406.2661 <br/>
-<a id="2">[2]</a> Martin Arjovsky and Soumith Chintala and Léon Bottou, Wasserstein GAN, 2017, https://arxiv.org/abs/1701.07875
+<a id="1">[2]</a> Martin Arjovsky and Soumith Chintala and Léon Bottou, Wasserstein GAN, 2017, https://arxiv.org/abs/1701.07875 <br/>
+<a id="1">[3]</a> Ishaan Gulrajani and Faruk Ahmed and Martin Arjovsky and Vincent Dumoulin and Aaron Courville, Improved Training of Wasserstein GANs, 2017, https://arxiv.org/abs/1704.00028
+
