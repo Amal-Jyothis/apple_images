@@ -143,6 +143,9 @@ def training_gan(model, device, dataloader, latent_size, num_epochs = 5, discr_t
                 Binary cross entropy loss for discriminator
                 """
                 # loss_frm_D = torch.nn.BCELoss()(outputs_1, y_train)
+                """"
+                Loss of discriminator, D(x) for Wasserstein loss
+                """
                 loss_frm_D = -torch.sum(outputs_1)/len(outputs_1)
 
                 """"
@@ -153,10 +156,19 @@ def training_gan(model, device, dataloader, latent_size, num_epochs = 5, discr_t
                 gen_output = model.model_gen(z).detach()
                 outputs_2 = model.model_discr(gen_output).view(-1, 1)
                 z_output = torch.full((images.size()[0], 1), 0.0)
+
+                """"
+                Binary cross entropy loss for discriminator
+                """
                 # loss_frm_GD = torch.nn.BCELoss()(outputs_2, z_output)
+                """"
+                Loss of discriminator, D(G(z)) for Wasserstein loss
+                """
                 loss_frm_GD = torch.sum(outputs_2)/len(outputs_2)
 
-                #Calculating Gradient Penalty term for loss function
+                '''
+                Calculating Gradient Penalty term for loss function
+                '''
                 # eps = 0.3
                 eps = torch.rand(images.shape[0], 1, 1, 1).to(device)
                 eps = eps.expand_as(images)
@@ -191,7 +203,14 @@ def training_gan(model, device, dataloader, latent_size, num_epochs = 5, discr_t
                 z = torch.randn(images.size()[0], latent_size, 1, 1).to(device)
                 outputs = model.model_discr(model.model_gen(z)).view(-1, 1)
                 output_label = torch.full((images.size()[0], 1), 1.0)
+
+                '''
+                BCE loss for Generator
+                '''
                 # loss_frm_G = torch.nn.BCELoss()(outputs, output_label)
+                '''
+                Loss of Generator, D(G(z)) for Wasserstein loss
+                '''
                 loss_frm_G = -torch.sum(outputs)/len(outputs)
                 loss_frm_G.backward()
                 model.optimizerG.step()
